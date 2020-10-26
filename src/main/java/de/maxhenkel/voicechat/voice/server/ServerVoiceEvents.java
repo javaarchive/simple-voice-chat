@@ -45,4 +45,7 @@ public class ServerVoiceEvents {
         }
     }
 
+    public Server getServer() {
+        return server;
+    }
 }

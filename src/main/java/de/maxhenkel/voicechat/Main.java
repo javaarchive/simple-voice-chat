@@ -1,14 +1,18 @@
 package de.maxhenkel.voicechat;
 
-import de.maxhenkel.voicechat.net.AuthenticationMessage;
+import de.maxhenkel.voicechat.item.ModItems;
+import de.maxhenkel.voicechat.net.*;
 import de.maxhenkel.voicechat.voice.client.AudioChannelConfig;
 import de.maxhenkel.voicechat.voice.client.ClientVoiceEvents;
 import de.maxhenkel.voicechat.voice.server.ServerVoiceEvents;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -44,6 +48,8 @@ public class Main {
     public static KeyBinding KEY_VOICE_CHAT_SETTINGS;
 
     public Main() {
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverStarting);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
@@ -70,6 +76,10 @@ public class Main {
 
         SIMPLE_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(Main.MODID, "default"), () -> "1.0.0", s -> true, s -> true);
         SIMPLE_CHANNEL.registerMessage(0, AuthenticationMessage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new AuthenticationMessage().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(1, CallMessage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new CallMessage().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(2, IncomingCallMessage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new IncomingCallMessage().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(3, AnswerCallMessage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new AnswerCallMessage().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(4, CallInfoMessage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new CallInfoMessage().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
     }
 
     @SubscribeEvent
@@ -84,6 +94,20 @@ public class Main {
 
         KEY_VOICE_CHAT_SETTINGS = new KeyBinding("key.voice_chat_settings", GLFW.GLFW_KEY_V, "key.categories.misc");
         ClientRegistry.registerKeyBinding(KEY_VOICE_CHAT_SETTINGS);
+    }
+
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event) {
+        event.getRegistry().registerAll(
+                ModItems.PHONE
+        );
+    }
+
+    @SubscribeEvent
+    public void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+        event.getRegistry().registerAll(
+                ModSounds.PHONE
+        );
     }
 
     @SubscribeEvent

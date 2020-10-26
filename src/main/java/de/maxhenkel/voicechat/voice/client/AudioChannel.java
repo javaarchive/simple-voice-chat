@@ -79,25 +79,32 @@ public class AudioChannel extends Thread {
                     }
                     PlayerEntity player = minecraft.world.getPlayerByUuid(message.getPlayerUUID());
                     if (player != null) {
-                        client.getTalkCache().updateTalking(player.getUniqueID());
-                        float distance = player.getDistance(minecraft.player);
-                        float percentage = 1F;
-                        float fadeDistance = Config.SERVER.VOICE_CHAT_FADE_DISTANCE.get().floatValue();
-                        float maxDistance = Config.SERVER.VOICE_CHAT_DISTANCE.get().floatValue();
-
-                        if (distance > fadeDistance) {
-                            percentage = 1F - Math.min((distance - fadeDistance) / (maxDistance - fadeDistance), 1F);
-                        }
-
-                        gainControl.setValue(Math.min(Math.max(Utils.percentageToDB(percentage * Config.CLIENT.VOICE_CHAT_VOLUME.get().floatValue() * (float) Config.VOLUME_CONFIG.getVolume(player)), gainControl.getMinimum()), gainControl.getMaximum()));
-
                         byte[] mono = soundPacket.getData();
+                        if (soundPacket.isCall()) {
+                            gainControl.setValue(Math.min(Math.max(Utils.percentageToDB(Config.CLIENT.VOICE_CHAT_VOLUME.get().floatValue() * (float) Config.VOLUME_CONFIG.getVolume(player)), gainControl.getMinimum()), gainControl.getMaximum()));
+                            byte[] stereo = Utils.convertToStereo(mono);
+                            speaker.start();
+                            speaker.write(stereo, 0, stereo.length);
+                        } else {
+                            client.getTalkCache().updateTalking(player.getUniqueID());
+                            float distance = player.getDistance(minecraft.player);
+                            float percentage = 1F;
+                            float fadeDistance = Config.SERVER.VOICE_CHAT_FADE_DISTANCE.get().floatValue();
+                            float maxDistance = Config.SERVER.VOICE_CHAT_DISTANCE.get().floatValue();
 
-                        Pair<Float, Float> stereoVolume = Utils.getStereoVolume(minecraft.player.getPositionVector(), minecraft.player.rotationYaw, player.getPositionVector());
+                            if (distance > fadeDistance) {
+                                percentage = 1F - Math.min((distance - fadeDistance) / (maxDistance - fadeDistance), 1F);
+                            }
 
-                        byte[] stereo = Utils.convertToStereo(mono, stereoVolume.getLeft(), stereoVolume.getRight());
-                        speaker.start();
-                        speaker.write(stereo, 0, stereo.length);
+                            gainControl.setValue(Math.min(Math.max(Utils.percentageToDB(percentage * Config.CLIENT.VOICE_CHAT_VOLUME.get().floatValue() * (float) Config.VOLUME_CONFIG.getVolume(player)), gainControl.getMinimum()), gainControl.getMaximum()));
+
+
+                            Pair<Float, Float> stereoVolume = Utils.getStereoVolume(minecraft.player.getPositionVector(), minecraft.player.rotationYaw, player.getPositionVector());
+
+                            byte[] stereo = Utils.convertToStereo(mono, stereoVolume.getLeft(), stereoVolume.getRight());
+                            speaker.start();
+                            speaker.write(stereo, 0, stereo.length);
+                        }
                     }
                 }
             }

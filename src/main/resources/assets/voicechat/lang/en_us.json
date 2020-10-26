@@ -14,10 +14,18 @@
   "message.voice_activation": "Voice activation threshold: %s dB",
   "message.adjust_volumes": "Adjust player volumes",
   "gui.adjust_volume.title": "Adjust Player Volumes",
+  "gui.phone.title": "Phone",
   "message.volume_amplification": "Amplification: %s",
   "message.adjust_volume_player": "Adjust volume of %s",
   "message.no_player": "No other players online",
   "message.previous": "Previous",
   "message.back": "Back",
-  "message.next": "Next"
+  "message.next": "Next",
+  "message.call": "Call",
+  "message.accept": "Accept",
+  "message.decline": "Decline",
+  "message.call_player": "Call a player",
+  "message.incoming_call": "Incoming call from %s",
+  "message.outgoing_call": "Calling %s",
+  "item.voicechat.phone": "Phone"
 }

@@ -3,6 +3,7 @@ package de.maxhenkel.voicechat.voice.server;
 import de.maxhenkel.voicechat.Config;
 import de.maxhenkel.voicechat.Main;
 import de.maxhenkel.voicechat.voice.common.NetworkMessage;
+import de.maxhenkel.voicechat.voice.common.SoundPacket;
 import de.maxhenkel.voicechat.voice.common.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -24,11 +25,13 @@ public class Server extends Thread {
     private BroadcastThread broadcastThread;
     private int port;
     private MinecraftServer server;
+    private Calls calls;
 
     public Server(int port, MinecraftServer server) {
         this.secrets = new HashMap<>();
         this.connections = new ArrayList<>();
         this.sendQueue = new ArrayList<>();
+        this.calls = new Calls();
         this.port = port;
         this.server = server;
         setDaemon(true);
@@ -136,11 +139,22 @@ public class Server extends Thread {
                                 .stream()
                                 .map(playerEntity -> getConnectionFromUUID(playerEntity.getUniqueID()))
                                 .collect(Collectors.toList());
+
+                        List<ClientConnection> activeCalls = calls.getConnections(player.getUniqueID()).stream().map(Server.this::getConnectionFromUUID).filter(Objects::nonNull).collect(Collectors.toList());
+
                         for (ClientConnection clientConnection : closeConnections) {
+                            if (activeCalls.contains(clientConnection)) {
+                                continue;
+                            }
                             if (!clientConnection.getPlayerUUID().equals(message.getPlayerUUID())) {
                                 clientConnection.addToQueue(message);
                             }
                         }
+
+                        for (ClientConnection clientConnection : activeCalls) {
+                            clientConnection.addToQueue(new NetworkMessage(new SoundPacket(((SoundPacket) message.getPacket()).getData(), true), message.getPlayerUUID()));
+                        }
+
                         sendQueue.remove(message);
                     }
                 } catch (Throwable t) {
@@ -159,5 +173,9 @@ public class Server extends Thread {
 
     public Map<UUID, UUID> getSecrets() {
         return secrets;
+    }
+
+    public Calls getCalls() {
+        return calls;
     }
 }

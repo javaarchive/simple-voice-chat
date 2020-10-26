@@ -1,0 +1,11 @@
+{
+  "take_image": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "voicechat:phone",
+        "stream": false
+      }
+    ]
+  }
+}
