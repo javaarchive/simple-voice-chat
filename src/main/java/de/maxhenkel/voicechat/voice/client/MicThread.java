@@ -137,7 +137,8 @@ public class MicThread extends Thread {
     private void sendAudioPacket(byte[] data) {
         try {
             byte[] encoded = encoder.encode(data);
-            client.sendToServer(new NetworkMessage(new MicPacket(encoded, sequenceNumber++)));
+            MicPacket mp = new MicPacket(encoded, sequenceNumber++);
+            client.sendToServer(new NetworkMessage(mp));
         } catch (Exception e) {
             e.printStackTrace();
         }

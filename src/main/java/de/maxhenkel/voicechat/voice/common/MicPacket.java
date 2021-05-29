@@ -6,6 +6,9 @@ public class MicPacket implements Packet<MicPacket> {
 
     private byte[] data;
     private long sequenceNumber;
+    private int x;
+    private int y;
+    private int z;
 
     public MicPacket(byte[] data, long sequenceNumber) {
         this.data = data;
@@ -29,6 +32,9 @@ public class MicPacket implements Packet<MicPacket> {
         MicPacket soundPacket = new MicPacket();
         soundPacket.data = buf.readByteArray();
         soundPacket.sequenceNumber = buf.readLong();
+        soundPacket.x = buf.readInt();
+        soundPacket.y = buf.readInt();
+        soundPacket.z = buf.readInt();
         return soundPacket;
     }
 
@@ -36,5 +42,8 @@ public class MicPacket implements Packet<MicPacket> {
     public void toBytes(PacketBuffer buf) {
         buf.writeByteArray(data);
         buf.writeLong(sequenceNumber);
+        buf.writeInt(x);
+        buf.writeInt(y);
+        buf.writeInt(z);
     }
 }
