@@ -12,6 +12,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.*;
 
+import net.minecraft.util.math.vector.Vector3d; // Vector3D
+
 public class Client extends Thread {
 
     private DatagramSocket socket;
@@ -26,6 +28,7 @@ public class Client extends Thread {
     private Map<UUID, AudioChannel> audioChannels;
     private AuthThread authThread;
     private long lastKeepAlive;
+    private Vector3d locationPointer;
 
     public Client(String serverIp, int serverPort, UUID playerUUID, UUID secret) throws IOException {
         this.address = InetAddress.getByName(serverIp);

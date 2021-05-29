@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,12 +30,14 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraft.util.math.vector.*; // Vector3D
+import net.minecraft.util.math.vector.Vector3d; // Vector3D
 
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.UUID;
+
+import de.maxhenkel.voicechat.voice.common.WorldPosition;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientVoiceEvents {
@@ -50,7 +53,7 @@ public class ClientVoiceEvents {
     private ClientPlayerStateManager playerStateManager;
     private PTTKeyHandler pttKeyHandler;
     private Minecraft minecraft;
-    private Vector3D currentPlayerPos = new Vector3D(0,0,0);
+    private WorldPosition sharedPlayerPosition;
 
     public ClientVoiceEvents() {
         playerStateManager = new ClientPlayerStateManager();
@@ -65,7 +68,8 @@ public class ClientVoiceEvents {
         // Get player location
         try{
             if(minecraft != null && minecraft.player != null){
-                Vector3D playerPos = minecraft.player.getPosition();
+                Vector3d playerPos = minecraft.cameraEntity.getPosition(0);
+                sharedPlayerPosition.copyFrom(playerPos);
             }
         }catch(Exception ex){
             // can't test this from current ide so this is here
@@ -86,6 +90,7 @@ public class ClientVoiceEvents {
                     String ip = address.getHostString();
                     Main.LOGGER.info("Connecting to server: '" + ip + ":" + Main.SERVER_CONFIG.voiceChatPort.get() + "'");
                     client = new Client(ip, Main.SERVER_CONFIG.voiceChatPort.get(), playerUUID, secret);
+
                     client.start();
                 }
             } catch (Exception e) {
