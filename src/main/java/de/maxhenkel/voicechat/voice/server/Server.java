@@ -146,13 +146,10 @@ public class Server extends Thread {
 
                     if (message.getPacket() instanceof MicPacket) {
                         MicPacket packet = (MicPacket) message.getPacket();
-                        ServerPlayerEntity player = server.getPlayerList().getPlayer(playerUUID);
-                        if (player == null) {
-                            continue;
-                        }
+
                         PlayerState state = playerStateManager.getState(playerUUID);
                         if (state == null || !state.hasGroup()) {
-                            processProximityPacket(player, packet);
+                            processProximityPacket(null, packet);
                         } else {
                             processGroupPacket(state, packet);
                         }
@@ -232,12 +229,13 @@ public class Server extends Thread {
         for (UUID uuid : connectionsToDrop) {
             disconnectClient(uuid);
             Main.LOGGER.info("Player {} timed out", uuid);
-            ServerPlayerEntity player = server.getPlayerList().getPlayer(uuid);
+            ServerPlayerEntity player = null;// server.getPlayerList().getPlayer(uuid);
+            // Disable reconnecting for now as we can't synchronize with server anyways
             if (player != null) {
                 Main.LOGGER.info("Reconnecting player {}", player.getDisplayName().getString());
                 Main.SERVER_VOICE_EVENTS.initializePlayerConnection(player);
             } else {
-                Main.LOGGER.warn("Reconnecting player {} failed (Could not find player)", player.getDisplayName().getString());
+                // Main.LOGGER.warn("Reconnecting player {} failed (Could not find player)", player.getDisplayName().getString());
             }
         }
     }
