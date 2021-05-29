@@ -50,6 +50,7 @@ public class ClientVoiceEvents {
     private ClientPlayerStateManager playerStateManager;
     private PTTKeyHandler pttKeyHandler;
     private Minecraft minecraft;
+    private Vector3D currentPlayerPos = new Vector3D(0,0,0);
 
     public ClientVoiceEvents() {
         playerStateManager = new ClientPlayerStateManager();
