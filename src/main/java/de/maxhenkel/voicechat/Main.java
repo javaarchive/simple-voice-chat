@@ -20,8 +20,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.lwjgl.glfw.GLFW;
 
 import java.util.regex.Pattern;
@@ -74,6 +76,7 @@ public class Main {
         CLIENT_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.CLIENT, ClientConfig.class);
         VOLUME_CONFIG = new PlayerVolumeConfig();
     }
+
 
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {

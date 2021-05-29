@@ -28,6 +28,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraft.util.math.vector.*; // Vector3D
+
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -52,8 +55,20 @@ public class ClientVoiceEvents {
         playerStateManager = new ClientPlayerStateManager();
         pttKeyHandler = new PTTKeyHandler();
         minecraft = Minecraft.getInstance();
-        minecraft.
+        // MinecraftForge.EVENT_BUS.
         MinecraftForge.EVENT_BUS.register(pttKeyHandler);
+    }
+
+    @SubscribeEvent
+    public void clientTickHandler(ClientTickEvent event){
+        // Get player location
+        try{
+            if(minecraft != null && minecraft.player != null){
+                Vector3D playerPos = minecraft.player.getPosition();
+            }
+        }catch(Exception ex){
+            // can't test this from current ide so this is here
+        }
     }
 
     public void authenticate(UUID playerUUID, UUID secret) {
