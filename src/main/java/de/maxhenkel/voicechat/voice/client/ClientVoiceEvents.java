@@ -70,6 +70,9 @@ public class ClientVoiceEvents {
             if(minecraft != null && minecraft.player != null){
                 Vector3d playerPos = minecraft.cameraEntity.getPosition(0);
                 sharedPlayerPosition.copyFrom(playerPos);
+                if(client != null){
+                    client.locationRef = sharedPlayerPosition;
+                }
             }
         }catch(Exception ex){
             // can't test this from current ide so this is here
@@ -90,7 +93,7 @@ public class ClientVoiceEvents {
                     String ip = address.getHostString();
                     Main.LOGGER.info("Connecting to server: '" + ip + ":" + Main.SERVER_CONFIG.voiceChatPort.get() + "'");
                     client = new Client(ip, Main.SERVER_CONFIG.voiceChatPort.get(), playerUUID, secret);
-
+                    client.locationRef = sharedPlayerPosition;
                     client.start();
                 }
             } catch (Exception e) {

@@ -3,6 +3,7 @@ import net.minecraft.util.math.vector.Vector3d; // Vector3D
 
 public class WorldPosition {
     float x,y,z;
+
     public WorldPosition(float x, float y, float z){
         this.x = x;
         this.y = y;

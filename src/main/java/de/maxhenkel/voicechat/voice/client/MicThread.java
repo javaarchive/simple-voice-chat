@@ -9,6 +9,7 @@ import de.maxhenkel.voicechat.voice.common.Utils;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
+import de.maxhenkel.voicechat.voice.common.WorldPosition;
 
 public class MicThread extends Thread {
 
@@ -138,6 +139,7 @@ public class MicThread extends Thread {
         try {
             byte[] encoded = encoder.encode(data);
             MicPacket mp = new MicPacket(encoded, sequenceNumber++);
+            mp.setCoord(this.client.locationRef);
             client.sendToServer(new NetworkMessage(mp));
         } catch (Exception e) {
             e.printStackTrace();

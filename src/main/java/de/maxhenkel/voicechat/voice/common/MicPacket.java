@@ -1,6 +1,7 @@
 package de.maxhenkel.voicechat.voice.common;
 
 import net.minecraft.network.PacketBuffer;
+import de.maxhenkel.voicechat.voice.common.WorldPosition;
 
 public class MicPacket implements Packet<MicPacket> {
 
@@ -13,6 +14,12 @@ public class MicPacket implements Packet<MicPacket> {
     public MicPacket(byte[] data, long sequenceNumber) {
         this.data = data;
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public void setCoord(WorldPosition wp){
+        this.x = wp.x;
+        this.y = wp.y;
+        this.z = wp.z;
     }
 
     public MicPacket() {

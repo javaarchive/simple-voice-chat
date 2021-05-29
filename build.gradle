@@ -35,7 +35,7 @@ minecraft {
             Random rnd = new Random()
             workingDirectory project.file('run').canonicalPath
             property 'forge.logging.console.level', 'debug'
-            args = ['--username', 'henkelmax' + rnd.nextInt(1000)]
+            args = ['--username', 'anonymously' + rnd.nextInt(1000)]
             source sourceSets.main
             mods {
                 mod_id {
