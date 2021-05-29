@@ -52,7 +52,7 @@ public class ClientVoiceEvents {
         playerStateManager = new ClientPlayerStateManager();
         pttKeyHandler = new PTTKeyHandler();
         minecraft = Minecraft.getInstance();
-
+        minecraft.
         MinecraftForge.EVENT_BUS.register(pttKeyHandler);
     }
 
